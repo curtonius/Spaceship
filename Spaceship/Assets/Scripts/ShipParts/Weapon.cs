@@ -16,10 +16,12 @@ public class Weapon : Part
     private float chargeValue;
     public float chargeSpeed;
     public float maxCharge;
+    private AudioSource shootingSFX;
 
     private void Start()
     {
         lastTimeFired = Time.time;
+        shootingSFX = GetComponent<AudioSource>();
     }
 
     public void Fire()
@@ -54,6 +56,8 @@ public class Weapon : Part
             }
             chargeValue = 0;
         }
+        shootingSFX.Play();
+        print("SHOOTING");
     }
 
     private void Update()

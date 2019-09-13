@@ -71,10 +71,10 @@ public class GameManager : MonoBehaviour
         highscoreText.text = "Highscore: " + MiscData.highscore.ToString();
         finishLogo.rectTransform.position -= new Vector3(-(Screen.width / 2 + finishLogo.rectTransform.rect.width / 2), 0, 0);
 
-        background1.rectTransform.sizeDelta = background2.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.width*2);
-        background2.rectTransform.anchoredPosition = background1.rectTransform.anchoredPosition + new Vector2(0, Screen.width * 2);
-        background1.GetComponent<Scroller>().tileSize = Screen.width * 2;
-        background2.GetComponent<Scroller>().tileSize = Screen.width * 2;
+        background1.rectTransform.sizeDelta = background2.rectTransform.sizeDelta = new Vector2(Screen.height, Screen.height*2);
+        background2.rectTransform.anchoredPosition = background1.rectTransform.anchoredPosition + new Vector2(0, Screen.height * 2);
+        background1.GetComponent<Scroller>().tileSize = Screen.height * 2;
+        background2.GetComponent<Scroller>().tileSize = Screen.height * 2;
 
         menuUI.sizeDelta = new Vector2(Screen.width,Screen.height);
     }
