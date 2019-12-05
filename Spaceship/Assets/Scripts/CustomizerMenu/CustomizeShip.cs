@@ -62,7 +62,7 @@ public class CustomizeShip : MonoBehaviour
         background1.tileSize = background2.tileSize = sizeVariable;
 
         current = this;
-        buttonHeight = buttonToClone.GetComponent<RectTransform>().rect.width;
+        buttonHeight = buttonToClone.GetComponent<RectTransform>().rect.height;
 
         DisplayHulls();
         LoadShip();
