@@ -288,7 +288,7 @@ public class CustomizeShip : MonoBehaviour
         CustomizerItem newButton = Instantiate(buttonToClone.gameObject, buttonToClone.transform.parent).GetComponent<CustomizerItem>();
         newButton.gameObject.SetActive(true);
         newButton.image.sprite = GameManager.current.allParts[id].sprite;
-        newButton.transform.position = buttonToClone.transform.position + new Vector3(0, -yPos, 0);
+        newButton.transform.localPosition = buttonToClone.transform.localPosition + new Vector3(0, -yPos, 0);
         newButton.ID = id;
         imageButtons.Add(newButton.GetComponent<Image>());
 
