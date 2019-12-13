@@ -7,7 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController current;
 
-    public float health;
+    public float Health {get { return health; } set { health = Mathf.Clamp(value, 0, maxHealth); UpdateHealthBar(); } }
+    private float health;
     public float maxHealth;
     public float movementSpeed;
     public float timeToHeal = 10;
@@ -23,11 +24,54 @@ public class PlayerController : MonoBehaviour
     private Vector3 bottomLeft;
 
     private Image healthBar;
+    
     private float healthBarSize;
     private float lastTimeHit;
     private float scrapWait;
     public bool waitAtStart;
     private Cutscene cutscene;
+
+    private void UpdateHealthBar()
+    {
+        float percentage = (float)health / (float)maxHealth;
+        healthBar.rectTransform.sizeDelta = new Vector2(healthBarSize * percentage, healthBar.rectTransform.rect.height);
+        healthBar.rectTransform.position = new Vector3(Screen.width - healthBarSize / 2 + (healthBarSize * (1 - percentage) / 2) - 5, healthBar.rectTransform.position.y, healthBar.rectTransform.position.z);
+
+        if (percentage >= 0.6f)
+        {
+            //Green bar to Yellow bar
+            healthBar.color = new Color((1 - percentage) * 2.5f, 1, 0);
+        }
+        else
+        {
+            //Yellow bar to red bar
+            healthBar.color = new Color(1, percentage / 0.6f, 0);
+        }
+
+        if (health < maxHealth )//AND NOT ALREADY HEALING
+            StartCoroutine(HealAfterTime());
+    }
+
+    private IEnumerator HealAfterTime()
+    {
+        while (health < maxHealth)
+        {
+            if (Time.time - lastTimeHit >= timeToHeal && MiscData.scrap >= 1)
+            {
+                Health += movementSpeed * Time.deltaTime;
+                scrapWait += Time.deltaTime;
+                if (scrapWait >= 1)
+                {
+                    scrapWait = 0;
+                    MiscData.scrap -= 1;
+                }
+            }
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return null;
+    }
+
     private void Start()
     {
         current = this;
@@ -84,32 +128,6 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        if (Time.time - lastTimeHit >= timeToHeal && MiscData.scrap >= 1 && health < maxHealth)
-        {
-            health += movementSpeed * Time.deltaTime;
-            scrapWait += Time.deltaTime;
-            if(scrapWait >= 1)
-            {
-                scrapWait = 0;
-                MiscData.scrap -= 1;
-            }
-        }
-
-        health = Mathf.Clamp(health, 0, maxHealth);
-        float percentage = (float)health / (float)maxHealth;
-        healthBar.rectTransform.sizeDelta = new Vector2(healthBarSize * percentage, healthBar.rectTransform.rect.height);
-        healthBar.rectTransform.position = new Vector3(Screen.width - healthBarSize / 2 + (healthBarSize * (1 - percentage) / 2) - 5, healthBar.rectTransform.position.y, healthBar.rectTransform.position.z);
-
-        if (percentage >= 0.6f)
-        {
-            //Green bar to Yellow bar
-            healthBar.color = new Color((1 - percentage) * 2.5f, 1, 0);
-        }
-        else
-        {
-            //Yellow bar to red bar
-            healthBar.color = new Color(1, percentage / 0.6f, 0);
-        }
 
         currentTime += Time.deltaTime;
         //If the health reaches 0 or below, player is dead
@@ -153,7 +171,7 @@ public class PlayerController : MonoBehaviour
                 Hazard hazard = collider.GetComponent<Hazard>();
                 CameraShake.current.Shake(hazard.shakeAmount, hazard.timeShake);
                 lastTimeHit = Time.time;
-                health -= hazard.damage;
+                Health -= hazard.damage;
                 GameManager.current.SpawnExplosion(collider.transform.position);
                 Destroy(collider.gameObject);
             }

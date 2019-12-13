@@ -155,6 +155,12 @@ public class GameManager : MonoBehaviour
 
     public void Back()
     {
+        if(SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            menuUI.gameObject.SetActive(true);
+            levelSelectionUI.SetActive(false);
+            return;
+        }
         MiscData.SaveGame();
         SceneManager.LoadScene(0);
         Destroy(gameObject);
@@ -183,7 +189,7 @@ public class GameManager : MonoBehaviour
         }
         //Activate modifers
         PlayerController.current.maxHealth += hull.healthMod + (MiscData.hullLight * 10);
-        PlayerController.current.health = PlayerController.current.maxHealth;
+        PlayerController.current.Health = PlayerController.current.maxHealth;
         PlayerController.current.movementSpeed += thruster.speedMod + MiscData.thrusterLight;
 
         Destroy(background1);
@@ -221,7 +227,7 @@ public class GameManager : MonoBehaviour
         }
         //Activate modifers
         PlayerController.current.maxHealth += hull.healthMod + (MiscData.hullLight*10);
-        PlayerController.current.health = PlayerController.current.maxHealth;
+        PlayerController.current.Health = PlayerController.current.maxHealth;
         PlayerController.current.movementSpeed += thruster.speedMod + MiscData.thrusterLight;
 
 
@@ -446,7 +452,7 @@ public class GameManager : MonoBehaviour
             Transform playerTrans = PlayerController.current.transform;
             Destroy(PlayerController.current);
             oldPosition = playerTrans.position;
-            newPosition = playerTrans.position + new Vector3(0, 0, 10);
+            newPosition = playerTrans.position + new Vector3(0, 0, 15);
 
             j = 0;
             while (playerTrans.position != newPosition)
