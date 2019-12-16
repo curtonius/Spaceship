@@ -13,35 +13,34 @@ public class Bullet : Hazard
         Destroy(gameObject, lifeTime);
     }
 
+    private void OnTriggerEnter(Collider collider)
+    {
+        if (gameObject != collider.gameObject && team != collider.tag && collider.GetComponent<Hazard>() && collider.GetComponent<Hazard>().team != team)
+        {
+            CameraShake.current.Shake(shakeAmount, timeShake);
+            if (collider.tag != "Enemy")
+            {
+                GameManager.current.SpawnExplosion(transform.position);
+                Destroy(collider.gameObject);
+                Destroy(gameObject);
+            }
+            else
+            {
+                Enemy enemy = collider.GetComponent<Enemy>();
+                if (enemy)
+                {
+                    enemy.health -= damage;
+                    enemy.Hurt();
+                }
+                GameManager.current.SpawnExplosion(transform.position);
+                Destroy(gameObject);
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         transform.position += direction * movementSpeed * Time.deltaTime;
-
-        Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2);
-        foreach(Collider collider in colliders)
-        {
-            if(gameObject != collider.gameObject && team != collider.tag && collider.GetComponent<Hazard>() && collider.GetComponent<Hazard>().team != team)
-            {
-                CameraShake.current.Shake(shakeAmount, timeShake);
-                if (collider.tag != "Enemy")
-                {
-                    GameManager.current.SpawnExplosion(transform.position);
-                    Destroy(collider.gameObject);
-                    Destroy(gameObject);
-                }
-                else
-                {
-                    Enemy enemy = collider.GetComponent<Enemy>();
-                    if(enemy)
-                    {
-                        enemy.health -= damage;
-                        enemy.Hurt();
-                    }
-                    GameManager.current.SpawnExplosion(transform.position);
-                    Destroy(gameObject);
-                }
-            }
-        }
     }
 }

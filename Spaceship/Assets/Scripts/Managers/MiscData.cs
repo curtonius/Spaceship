@@ -54,8 +54,9 @@ public class SaveFile
 
 public static class MiscData
 {
+    private static int scrap;
     public static int highscore;
-    public static int scrap;
+    public static int Scrap { get { return scrap; } set { scrap = value; EventManager.Instance.Raise<int>("UpdateScrap", scrap);} }
     public static int level=1;
     public static int repairKits;
     public static List<int> unlockedItems=new List<int>(new int[3] { 0, 1, 2 });

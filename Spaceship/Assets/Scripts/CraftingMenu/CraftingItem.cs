@@ -21,9 +21,9 @@ public class CraftingItem : MonoBehaviour
     public void Select()
     {
         Part p = GameManager.current.allParts[ID];
-        if(p.levelRequirement <= MiscData.level && p.scrapRequirement <= MiscData.scrap)
+        if(p.levelRequirement <= MiscData.level && p.scrapRequirement <= MiscData.Scrap)
         {
-            MiscData.scrap -= p.scrapRequirement;
+            MiscData.Scrap -= p.scrapRequirement;
             MiscData.unlockedItems.Add(ID);
             if (p is Hull)
             {

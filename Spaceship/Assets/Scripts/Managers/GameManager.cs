@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
         current = this;
 
         DontDestroyOnLoad(gameObject);
-
+        EventManager.Instance.AddEventListener<int>("UpdateScrap", UpdateScrapText);
         MiscData.LoadGame();
         currentLevelMax = MiscData.level;
         topRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 10));
@@ -345,9 +345,13 @@ public class GameManager : MonoBehaviour
         lastEnemy = enemy;
     }
 
+    private void UpdateScrapText(int scrap)
+    {
+        scrapText.text = scrap.ToString();
+    }
+
     private void Update()
     {
-        scrapText.text = MiscData.scrap.ToString();
         if(currentState != State.MainMenu)
         {
             if(currentState == State.SurviveUntilEnd || currentState == State.NumberOfEnemies)

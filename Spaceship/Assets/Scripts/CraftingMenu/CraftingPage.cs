@@ -45,7 +45,7 @@ public class CraftingPage : MonoBehaviour
     private void Start()
     {
         current = this;
-
+        EventManager.Instance.AddEventListener<int>("UpdateScrap", UpdateScrapText);
         backgroundWidth = background.rect.width;
         buttonWidth = buttonToClone.GetComponent<RectTransform>().rect.width;
 
@@ -224,9 +224,9 @@ public class CraftingPage : MonoBehaviour
         else if (currentPartType == "Weapon")
             scrapReq = 2 * Mathf.Pow(MiscData.weaponLight, 2);
         
-        if(MiscData.scrap >= scrapReq)
+        if(MiscData.Scrap >= scrapReq)
         {
-            MiscData.scrap -= (int)scrapReq;
+            MiscData.Scrap -= (int)scrapReq;
             if (currentPartType == "Hull")
                 MiscData.hullLight += 1;
             else if (currentPartType == "Thruster")
@@ -274,15 +274,15 @@ public class CraftingPage : MonoBehaviour
 
     public void CraftRepairKit()
     {
-        if(MiscData.scrap >= 5)
+        if(MiscData.Scrap >= 5)
         {
-            MiscData.scrap -= 5;
+            MiscData.Scrap -= 5;
             MiscData.repairKits += 1;
         }
     }
 
-    private void Update()
+    private void UpdateScrapText(int scrap)
     {
-        scrapText.text = MiscData.scrap.ToString();
+        scrapText.text = scrap.ToString();
     }
 }

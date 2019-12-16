@@ -30,11 +30,14 @@ public class PlayerInputManager : MonoSingleton<PlayerInputManager>
             lastVertical = currentCheck;
         }
 
-        currentCheck = Input.GetAxisRaw("Jump");
-        if (currentCheck != lastFiring)
+        if (PlayerController.current && !PlayerController.current.waitAtStart)
         {
-            EventManager.Instance.Raise<float>("UpdateFiring", currentCheck);
-            lastFiring = currentCheck;
+            currentCheck = Input.GetAxisRaw("Jump");
+            if (currentCheck != lastFiring)
+            {
+                EventManager.Instance.Raise<float>("UpdateFiring", currentCheck);
+                lastFiring = currentCheck;
+            }
         }
 
         Vector3 currentMousePosition = Input.mousePosition;

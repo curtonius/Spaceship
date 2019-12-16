@@ -6,7 +6,7 @@ public class Scrap : Collect
 {
     public override void DoThing()
     {
-        MiscData.scrap += 1;
+        MiscData.Scrap += 1;
         Destroy(gameObject);
     }
 }

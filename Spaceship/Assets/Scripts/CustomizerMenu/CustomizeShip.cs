@@ -52,6 +52,7 @@ public class CustomizeShip : MonoBehaviour
 
     private void Start()
     {
+        EventManager.Instance.AddEventListener<Vector3>("MovedMouse", MovedMouse);
         Vector3 topRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 15));
         Vector3 bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 15));
         //Gets distance between left side of the screen and right side of the screen
@@ -69,9 +70,8 @@ public class CustomizeShip : MonoBehaviour
         GameManager.current.Clear();
     }
 
-    private void Update()
+    private void MovedMouse(Vector3 mousePosition)
     {
-        Vector3 mousePosition = Input.mousePosition;
         RectTransform rectTransform = background.GetComponent<RectTransform>();
         Vector3 topPosition = rectTransform.position + new Vector3(0, rectTransform.rect.height / 3, 0);
         Vector3 bottomPosition = rectTransform.position - new Vector3(0, rectTransform.rect.height / 3, 0);
