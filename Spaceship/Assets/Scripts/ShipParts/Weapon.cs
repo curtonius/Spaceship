@@ -17,11 +17,25 @@ public class Weapon : Part
     public float chargeSpeed;
     public float maxCharge;
     private AudioSource shootingSFX;
+    private bool spaceDown;
 
     private void Start()
     {
         lastTimeFired = Time.time;
         shootingSFX = GetComponent<AudioSource>();
+
+        EventManager.Instance.AddEventListener<float>("UpdateFiring", UpdateFiring);
+    }
+
+    public void UpdateFiring(float updated)
+    {
+        if (updated == 1)
+        {
+            spaceDown = true;
+            StartCoroutine(SetupFire());
+        }
+        else
+            spaceDown = false;
     }
 
     public void Fire()
@@ -57,31 +71,26 @@ public class Weapon : Part
             chargeValue = 0;
         }
         shootingSFX.Play();
-        print("SHOOTING");
     }
 
-    private void Update()
+    IEnumerator SetupFire()
     {
-        if (!PlayerController.current || (PlayerController.current && PlayerController.current.waitAtStart))
-            return;
-
-        chargeValue = Mathf.Clamp(chargeValue, 0, maxCharge);
-        if (Time.time - lastTimeFired >= fireRate)
+        while (spaceDown)
         {
-            if (Input.GetAxisRaw("Jump") != 0)
+            while (spaceDown && charge)
             {
-                if (charge)
-                    charging = true;
-                else
-                    Fire();
-            }
-            else
-            {
+                chargeValue = Mathf.Clamp(chargeValue, 0, maxCharge);
+
                 if (charging)
-                    Fire();
+                    chargeValue += Time.deltaTime * chargeSpeed;
+                yield return new WaitForEndOfFrame();
             }
+            if (Time.time - lastTimeFired >= fireRate)
+            {
+                Fire();
+            }
+            yield return new WaitForEndOfFrame();
         }
-        if (charging)
-            chargeValue += Time.deltaTime*chargeSpeed;
+        yield return null;
     }
 }

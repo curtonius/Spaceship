@@ -100,6 +100,8 @@ public class PlayerController : MonoBehaviour
 
         lastPosition = new Vector3(0,0,-10);
 
+        PlayerInputManager fake = PlayerInputManager.Instance;
+
         if (FindObjectOfType<Cutscene>())
         {
             Cutscene[] cutscenes;
