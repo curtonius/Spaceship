@@ -34,6 +34,11 @@ public class PlayerController : MonoBehaviour
     private float verticalMovement;
     private bool alreadyMoving;
 
+    private int repairKit;
+    private int impactShields=3;
+    private bool shield;
+    private GameObject forceField;
+
     private void UpdateHealth()
     {
         float percentage = (float)health / (float)maxHealth;
@@ -60,6 +65,11 @@ public class PlayerController : MonoBehaviour
             GameManager.current.PlayerDied();
             GameManager.current.SpawnExplosion(transform.position);
             Destroy(gameObject);
+        }
+
+        if(MiscData.repairKits != 0)
+        {
+            repairKit = 1;
         }
     }
 
@@ -114,6 +124,8 @@ public class PlayerController : MonoBehaviour
         PlayerInputManager fake = PlayerInputManager.Instance;
         EventManager.Instance.AddEventListener<float>("UpdateHorizontal", UpdateHorizontal);
         EventManager.Instance.AddEventListener<float>("UpdateVertical", UpdateVertical);
+        EventManager.Instance.AddEventListener<bool>("UpdateImpact", UpdateImpact);
+        EventManager.Instance.AddEventListener<bool>("UpdateRepair", UpdateRepair);
 
         if (FindObjectOfType<Cutscene>())
         {
@@ -160,6 +172,78 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(Move());
     }
 
+    private void UpdateImpact(bool impact)
+    {
+        if(impact && impactShields != 0 && !shield && cutscene == null)
+        {
+            impactShields -= 1;
+            shield = true;
+            forceField = GameManager.current.EnableImpactField();
+            StartCoroutine(UseImpactShield());
+        }
+    }
+    private void UpdateRepair(bool repair)
+    {
+        if(repair && repairKit != 0 && cutscene == null)
+        {
+            repairKit -= 1;
+            StartCoroutine(UseRepairKit());
+        }
+    }
+
+    IEnumerator UseImpactShield()
+    {
+        float time = 0;
+        while(time < 1)
+        {
+            time += Time.deltaTime*2;
+            forceField.transform.localScale = Vector3.Lerp(new Vector3(), new Vector3(2.5f, 2.5f, 2.5f), time);
+            yield return new WaitForEndOfFrame();
+        }
+        time = 0;
+        while(time < 5)
+        {
+            time += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        time = 0;
+        while(time < 2)
+        {
+            time += Time.deltaTime;
+            float r = Random.value;
+            if (r < 0.5f)
+                forceField.transform.localScale = new Vector3();
+            else
+                forceField.transform.localScale = new Vector3(2.5f, 2.5f, 2.5f);
+            yield return new WaitForEndOfFrame();
+        }
+        shield = false;
+        Destroy(forceField);
+        yield return null;
+    }
+
+    IEnumerator UseRepairKit()
+    {
+        float amountToHeal = maxHealth - health;
+        float current = 0;
+        while(current < amountToHeal)
+        {
+            current += 1;
+            Health += 1;
+            yield return new WaitForEndOfFrame();
+        }
+        MiscData.repairKits -= 1;
+        yield return null;
+    }
+
+    IEnumerator ShieldHit()
+    {
+        Time.timeScale = 0;
+        yield return new WaitForSecondsRealtime(0.25f);
+        Time.timeScale = 1;
+        yield return null;
+    }
+
     IEnumerator Move()
     {
         alreadyMoving = true;
@@ -167,29 +251,31 @@ public class PlayerController : MonoBehaviour
         lastPosition += (Vector3.forward * verticalMovement) * moveByTime + (Vector3.right * horizontalMovement) * moveByTime;
         while (transform.position != lastPosition && cutscene == null)
         {
-            moveByTime = movementSpeed * Time.deltaTime;
-            //Choose direction to move towards based on previously inputted direction
-            lastPosition += (Vector3.forward * verticalMovement) * moveByTime + (Vector3.right * horizontalMovement) * moveByTime;
-            bool hadToStop = false;
-
-            if (lastPosition.x < bottomLeft.x + 1 || lastPosition.x > topRight.x - 1)
+            if (Time.timeScale != 0)
             {
-                lastPosition -= Vector3.right * horizontalMovement * moveByTime;
-                hadToStop = true;
+                moveByTime = movementSpeed * Time.deltaTime;
+                //Choose direction to move towards based on previously inputted direction
+                lastPosition += (Vector3.forward * verticalMovement) * moveByTime + (Vector3.right * horizontalMovement) * moveByTime;
+                bool hadToStop = false;
+
+                if (lastPosition.x < bottomLeft.x + 1 || lastPosition.x > topRight.x - 1)
+                {
+                    lastPosition -= Vector3.right * horizontalMovement * moveByTime;
+                    hadToStop = true;
+                }
+                if (lastPosition.z < bottomLeft.z + 0.5f || lastPosition.z > topRight.z - 0.5f)
+                {
+                    lastPosition -= Vector3.forward * verticalMovement * moveByTime;
+                }
+
+                //Move in that direction floatily
+                transform.position = Vector3.Lerp(transform.position, lastPosition, 1 / movementSpeed);
+
+                if (horizontalMovement == 0 || hadToStop)
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, 0), 0.1f);
+                else
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, -25 * horizontalMovement), 0.1f);
             }
-            if (lastPosition.z < bottomLeft.z + 0.5f || lastPosition.z > topRight.z - 0.5f)
-            {
-                lastPosition -= Vector3.forward * verticalMovement * moveByTime;
-            }
-
-            //Move in that direction floatily
-            transform.position = Vector3.Lerp(transform.position, lastPosition, 1 / movementSpeed);
-
-            if (horizontalMovement == 0 || hadToStop)
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, 0), 0.1f);
-            else
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, -25 * horizontalMovement), 0.1f);
-
             yield return new WaitForEndOfFrame();
         }
         alreadyMoving = false;
@@ -202,8 +288,16 @@ public class PlayerController : MonoBehaviour
         {
             Hazard hazard = collider.GetComponent<Hazard>();
             CameraShake.current.Shake(hazard.shakeAmount, hazard.timeShake);
-            lastTimeHit = Time.time;
-            Health -= hazard.damage;
+            if (!shield)
+            {
+                lastTimeHit = Time.time;
+                Health -= hazard.damage;
+            }
+            else
+            {
+                hazard.playerDestroyed = true;
+                StartCoroutine(ShieldHit());
+            }
             GameManager.current.SpawnExplosion(collider.transform.position);
             Destroy(collider.gameObject);
         }

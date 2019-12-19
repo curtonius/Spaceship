@@ -9,7 +9,8 @@ public class GameManager : MonoBehaviour
     //Singleton for GameManager
     public static GameManager current;
     public enum State { NumberOfEnemies, SurviveUntilEnd, Endless, MainMenu}
-    public State currentState = State.MainMenu;
+    public State CurrentState { get{ return currentState; } set { currentState = value; CheckState(); } }
+    private State currentState = State.MainMenu;
 
     public Part[] allParts;
 
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
 
     //Prefab containing the explosion particle effect
     public GameObject explosionPrefab;
+    public GameObject forceFieldPrefab;
     //Image for the healthbar
     public Image healthBar;
 
@@ -88,6 +90,11 @@ public class GameManager : MonoBehaviour
         Destroy(explosion, 0.5f);
     }
 
+    public GameObject EnableImpactField()
+    {
+        GameObject field = Instantiate(forceFieldPrefab, PlayerController.current.transform);
+        return field;
+    }
 
     //Add points to the total score
     public void AddToScore(int points)
@@ -113,7 +120,7 @@ public class GameManager : MonoBehaviour
     public void EndlessButton()
     {
         StartCoroutine(StartEndless());
-        currentState = State.Endless;
+        CurrentState = State.Endless;
         menuUI.gameObject.SetActive(false);
         gameUI.gameObject.SetActive(true);
         SceneManager.LoadScene(3);
@@ -249,11 +256,11 @@ public class GameManager : MonoBehaviour
 
         if (SceneManager.GetActiveScene().buildIndex % 5 == 0)
         {
-            currentState = State.NumberOfEnemies;
+            CurrentState = State.NumberOfEnemies;
         }
         else
         {
-            currentState = State.SurviveUntilEnd;
+            CurrentState = State.SurviveUntilEnd;
         }
 
         Vector3 oldGameUIPosition = gameUI.position;
@@ -305,10 +312,6 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator DragIn()
-    {
-        yield return null;
-    }
 
     //Click on Next button to change which level is being selected
     public void NextLevel()
@@ -350,38 +353,48 @@ public class GameManager : MonoBehaviour
         scrapText.text = scrap.ToString();
     }
 
-    private void Update()
+    void CheckState()
     {
-        if(currentState != State.MainMenu)
+        if (CurrentState == State.SurviveUntilEnd || CurrentState == State.NumberOfEnemies)
         {
-            if(currentState == State.SurviveUntilEnd || currentState == State.NumberOfEnemies)
+            StartCoroutine(PlayStandardGame());
+        }
+    }
+
+    IEnumerator PlayStandardGame()
+    {
+        bool playing = true;
+        while (playing)
+        {
+            List<Hazard> hazards = new List<Hazard>(FindObjectsOfType<Hazard>());
+            hazards.RemoveAll(x => x.name.Contains("Bullet"));
+            if (hazards.Count == 0)
             {
-                List<Hazard> hazards = new List<Hazard>(FindObjectsOfType<Hazard>());
-                hazards.RemoveAll(x => x.name.Contains("Bullet"));
-                if(hazards.Count == 0)
+                if (SceneManager.GetActiveScene().buildIndex == currentLevelMax + 2 && SceneManager.sceneCountInBuildSettings > currentLevelMax + 3)
                 {
-                    if(SceneManager.GetActiveScene().buildIndex == currentLevelMax+2 && SceneManager.sceneCountInBuildSettings > currentLevelMax+3)
-                    {
-                        currentLevelMax += 1;
-                        MiscData.level = currentLevelMax;
-                    }
-                    StartCoroutine(EndLevel(true,false));
+                    currentLevelMax += 1;
+                    MiscData.level = currentLevelMax;
                 }
-                Bullet[] bullets = FindObjectsOfType<Bullet>();
-                for (int i = 0; i < bullets.Length; i += 1)
+                StartCoroutine(EndLevel(true, false));
+                playing = false;
+            }
+            Bullet[] bullets = FindObjectsOfType<Bullet>();
+            for (int i = 0; i < bullets.Length; i += 1)
+            {
+                if (bullets[i].transform.position.z > topRight.z)
                 {
-                    if (bullets[i].transform.position.z > topRight.z)
-                    {
-                        Destroy(bullets[i].gameObject);
-                    }
+                    Destroy(bullets[i].gameObject);
                 }
             }
+            yield return new WaitForEndOfFrame();
         }
+
+        yield return null;
     }
 
     public void PlayerDied()
     {
-        if (currentState == State.Endless)
+        if (CurrentState == State.Endless)
         {
             StartCoroutine(EndLevel(false, true));
         }
@@ -400,7 +413,7 @@ public class GameManager : MonoBehaviour
         {
             finishLogo.text = "Final Score: " + score + "!";
         }
-        currentState = State.MainMenu;
+        CurrentState = State.MainMenu;
         RectTransform rectTransform = finishLogo.rectTransform;
         while(rectTransform.position.x > Screen.width/2)
         {
@@ -468,7 +481,7 @@ public class GameManager : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(1);
-        currentState = State.MainMenu;
+        CurrentState = State.MainMenu;
         MiscData.SaveGame();
         SceneManager.LoadScene(0);
         yield return null;

@@ -147,7 +147,7 @@ public class Enemy : MonoBehaviour
                 //If enemy is further than the bottom of players screen, KILL IT
                 if(transform.position.z < bottomLeft.z-1)
                 {
-                    if(GameManager.current.currentState != GameManager.State.NumberOfEnemies)
+                    if(GameManager.current.CurrentState != GameManager.State.NumberOfEnemies)
                     {
                         Destroy(gameObject);
                     }

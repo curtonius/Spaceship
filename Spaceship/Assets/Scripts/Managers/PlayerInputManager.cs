@@ -6,6 +6,8 @@ public class PlayerInputManager : MonoSingleton<PlayerInputManager>
     float lastHorizontal;
     float lastVertical;
     float lastFiring;
+    bool lastImpact;
+    bool lastRepair;
     Vector3 lastMousePosition;
 
     public override void OnInitialize()
@@ -30,18 +32,30 @@ public class PlayerInputManager : MonoSingleton<PlayerInputManager>
             lastVertical = currentCheck;
         }
 
-        if (PlayerController.current && !PlayerController.current.waitAtStart)
+
+        currentCheck = Input.GetAxisRaw("Jump");
+        if (currentCheck != lastFiring)
         {
-            currentCheck = Input.GetAxisRaw("Jump");
-            if (currentCheck != lastFiring)
-            {
-                EventManager.Instance.Raise<float>("UpdateFiring", currentCheck);
-                lastFiring = currentCheck;
-            }
+            EventManager.Instance.Raise<float>("UpdateFiring", currentCheck);
+            lastFiring = currentCheck;
+        }
+
+        bool check = Input.GetKey(KeyCode.LeftShift);
+        if (check != lastImpact)
+        {
+            EventManager.Instance.Raise<bool>("UpdateImpact", check);
+            lastImpact = check;
+        }
+
+        check = Input.GetKey(KeyCode.LeftControl);
+        if (check != lastRepair)
+        {
+            EventManager.Instance.Raise<bool>("UpdateRepair", check);
+            lastRepair = check;
         }
 
         Vector3 currentMousePosition = Input.mousePosition;
-        if(currentMousePosition != lastMousePosition)
+        if (currentMousePosition != lastMousePosition)
         {
             EventManager.Instance.Raise<Vector3>("MovedMouse", currentMousePosition);
             lastMousePosition = currentMousePosition;

@@ -85,7 +85,8 @@ public class Weapon : Part
                     chargeValue += Time.deltaTime * chargeSpeed;
                 yield return new WaitForEndOfFrame();
             }
-            if (Time.time - lastTimeFired >= fireRate)
+
+            if (Time.time - lastTimeFired >= fireRate && PlayerController.current && !PlayerController.current.waitAtStart)
             {
                 Fire();
             }
