@@ -34,12 +34,13 @@ public class PlayerController : MonoBehaviour
     private float verticalMovement;
     private bool alreadyMoving;
 
-    private int repairKit;
+    private int repairKit=1;
     private int impactShields=3;
     private bool shield;
-    private bool dodging;
+    public bool dodging;
     private GameObject forceField;
-
+    private float left = 0;
+    private float up = 0;
     private void UpdateHealth()
     {
         float percentage = (float)health / (float)maxHealth;
@@ -206,7 +207,8 @@ public class PlayerController : MonoBehaviour
     {
         dodging = true;
         float currentTime = 0;
-        
+        up = verticalMovement;
+        left = horizontalMovement;
         if (movementSpeed > 20)
         {
             Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
@@ -295,6 +297,7 @@ public class PlayerController : MonoBehaviour
         alreadyMoving = true;
         float moveByTime = movementSpeed * Time.deltaTime;
         lastPosition += (Vector3.forward * verticalMovement) * moveByTime + (Vector3.right * horizontalMovement) * moveByTime;
+
         while (transform.position != lastPosition && cutscene == null)
         {
             if (Time.timeScale != 0)
@@ -302,6 +305,7 @@ public class PlayerController : MonoBehaviour
                 moveByTime = movementSpeed * Time.deltaTime;
                 //Choose direction to move towards based on previously inputted direction
                 lastPosition += (Vector3.forward * verticalMovement) * moveByTime + (Vector3.right * horizontalMovement) * moveByTime;
+
                 bool hadToStop = false;
 
                 if (lastPosition.x < bottomLeft.x + 1 || lastPosition.x > topRight.x - 1)

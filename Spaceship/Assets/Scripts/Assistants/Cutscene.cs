@@ -42,7 +42,7 @@ public class Cutscene : MonoBehaviour
         cutsceneUI.SetActive(true);
         for (int i=0; i<parts.Length; i+=1)
         {
-            while(Input.GetAxisRaw("Jump") == 0)
+            while(Input.GetAxisRaw("Fire") == 0)
             {
                 characterImage.sprite = parts[i].sprite;
 
@@ -50,7 +50,7 @@ public class Cutscene : MonoBehaviour
                 {
                     for (int o = 0; o <= parts[i].dialog.Length; o += 1)
                     {
-                        if(Input.GetAxisRaw("Jump") != 0)
+                        if(Input.GetAxisRaw("Fire") != 0)
                         {
                             break;
                         }
@@ -62,7 +62,7 @@ public class Cutscene : MonoBehaviour
                 yield return new WaitForEndOfFrame();
             }
 
-            while(Input.GetAxisRaw("Jump") != 0)
+            while(Input.GetAxisRaw("Fire") != 0)
             {
                 yield return new WaitForEndOfFrame();
             }

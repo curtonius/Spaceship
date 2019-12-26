@@ -6,9 +6,9 @@ public class PlayerInputManager : MonoSingleton<PlayerInputManager>
     float lastHorizontal;
     float lastVertical;
     float lastFiring;
-    bool lastImpact;
-    bool lastRepair;
-    bool lastDodge;
+    float lastImpact;
+    float lastRepair;
+    float lastDodge;
     Vector3 lastMousePosition;
 
     public override void OnInitialize()
@@ -19,14 +19,14 @@ public class PlayerInputManager : MonoSingleton<PlayerInputManager>
 
     void Update()
     {
-        float currentCheck = Input.GetAxisRaw("Horizontal");
+        float currentCheck = Input.GetAxis("Horizontal");
         if (currentCheck != lastHorizontal)
         {
             EventManager.Instance.Raise<float>("UpdateHorizontal", currentCheck);
             lastHorizontal = currentCheck;
         }
 
-        currentCheck = Input.GetAxisRaw("Vertical");
+        currentCheck = Input.GetAxis("Vertical");
         if (currentCheck != lastVertical)
         {
             EventManager.Instance.Raise<float>("UpdateVertical", currentCheck);
@@ -34,32 +34,35 @@ public class PlayerInputManager : MonoSingleton<PlayerInputManager>
         }
 
 
-        currentCheck = Input.GetAxisRaw("Jump");
+        currentCheck = Input.GetAxisRaw("Fire");
         if (currentCheck != lastFiring)
         {
             EventManager.Instance.Raise<float>("UpdateFiring", currentCheck);
             lastFiring = currentCheck;
         }
 
-        bool check = Input.GetKey(KeyCode.Tab);
-        if (check != lastImpact)
+        currentCheck = Input.GetAxisRaw("Shield");
+        if (currentCheck != lastImpact)
         {
+            bool check = (currentCheck == 1);
             EventManager.Instance.Raise<bool>("UpdateImpact", check);
-            lastImpact = check;
+            lastImpact = currentCheck;
         }
 
-        check = Input.GetKey(KeyCode.LeftControl);
-        if (check != lastRepair)
+        currentCheck = Input.GetAxisRaw("Repair");
+        if (currentCheck != lastRepair)
         {
+            bool check = (currentCheck == 1);
             EventManager.Instance.Raise<bool>("UpdateRepair", check);
-            lastRepair = check;
+            lastRepair = currentCheck;
         }
 
-        check = Input.GetKey(KeyCode.LeftShift);
-        if (check != lastDodge)
+        currentCheck = Input.GetAxisRaw("Dodge");
+        if (currentCheck != lastDodge)
         {
+            bool check = (currentCheck == 1);
             EventManager.Instance.Raise<bool>("UpdateDodge", check);
-            lastDodge = check;
+            lastDodge = currentCheck;
         }
 
         Vector3 currentMousePosition = Input.mousePosition;

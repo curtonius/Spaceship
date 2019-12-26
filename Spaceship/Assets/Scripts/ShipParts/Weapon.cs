@@ -86,7 +86,7 @@ public class Weapon : Part
                 yield return new WaitForEndOfFrame();
             }
 
-            if (Time.time - lastTimeFired >= fireRate && PlayerController.current && !PlayerController.current.waitAtStart)
+            if (Time.time - lastTimeFired >= fireRate && PlayerController.current && !PlayerController.current.waitAtStart && !PlayerController.current.dodging)
             {
                 Fire();
             }

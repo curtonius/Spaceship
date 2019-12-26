@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<SaveFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Highscore="310" Scrap="18" Level="1" RepairKits="0" Hull="0" Thruster="1" HullLight="0" ThrusterLight="0" WeaponLight="0">
+<SaveFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Highscore="490" Scrap="3" Level="1" RepairKits="-2" Hull="0" Thruster="1" HullLight="0" ThrusterLight="0" WeaponLight="0">
   <UnlockedItems>
     <int>0</int>
     <int>1</int>
