@@ -29,7 +29,7 @@ public class Weapon : Part
 
     public void UpdateFiring(float updated)
     {
-        if (updated == 1)
+        if (updated == 1 && PlayerController.current && !PlayerController.current.waitAtStart)
         {
             spaceDown = true;
             StartCoroutine(SetupFire());

@@ -8,6 +8,7 @@ public class PlayerInputManager : MonoSingleton<PlayerInputManager>
     float lastFiring;
     bool lastImpact;
     bool lastRepair;
+    bool lastDodge;
     Vector3 lastMousePosition;
 
     public override void OnInitialize()
@@ -40,7 +41,7 @@ public class PlayerInputManager : MonoSingleton<PlayerInputManager>
             lastFiring = currentCheck;
         }
 
-        bool check = Input.GetKey(KeyCode.LeftShift);
+        bool check = Input.GetKey(KeyCode.Tab);
         if (check != lastImpact)
         {
             EventManager.Instance.Raise<bool>("UpdateImpact", check);
@@ -52,6 +53,13 @@ public class PlayerInputManager : MonoSingleton<PlayerInputManager>
         {
             EventManager.Instance.Raise<bool>("UpdateRepair", check);
             lastRepair = check;
+        }
+
+        check = Input.GetKey(KeyCode.LeftShift);
+        if (check != lastDodge)
+        {
+            EventManager.Instance.Raise<bool>("UpdateDodge", check);
+            lastDodge = check;
         }
 
         Vector3 currentMousePosition = Input.mousePosition;

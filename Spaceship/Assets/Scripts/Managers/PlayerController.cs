@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour
     private int repairKit;
     private int impactShields=3;
     private bool shield;
+    private bool dodging;
     private GameObject forceField;
 
     private void UpdateHealth()
@@ -126,6 +127,7 @@ public class PlayerController : MonoBehaviour
         EventManager.Instance.AddEventListener<float>("UpdateVertical", UpdateVertical);
         EventManager.Instance.AddEventListener<bool>("UpdateImpact", UpdateImpact);
         EventManager.Instance.AddEventListener<bool>("UpdateRepair", UpdateRepair);
+        EventManager.Instance.AddEventListener<bool>("UpdateDodge", UpdateDodge);
 
         if (FindObjectOfType<Cutscene>())
         {
@@ -162,19 +164,19 @@ public class PlayerController : MonoBehaviour
     private void UpdateHorizontal(float horizontal)
     {
         horizontalMovement = horizontal;
-        if(!alreadyMoving && cutscene == null)
+        if(!alreadyMoving && !waitAtStart)
             StartCoroutine(Move());
     }
     private void UpdateVertical(float vertical)
     {
         verticalMovement = vertical;
-        if (!alreadyMoving && cutscene == null)
+        if (!alreadyMoving && !waitAtStart)
             StartCoroutine(Move());
     }
 
     private void UpdateImpact(bool impact)
     {
-        if(impact && impactShields != 0 && !shield && cutscene == null)
+        if(impact && impactShields != 0 && !shield && !waitAtStart)
         {
             impactShields -= 1;
             shield = true;
@@ -184,11 +186,55 @@ public class PlayerController : MonoBehaviour
     }
     private void UpdateRepair(bool repair)
     {
-        if(repair && repairKit != 0 && cutscene == null)
+        if(repair && repairKit != 0 && !waitAtStart)
         {
             repairKit -= 1;
             StartCoroutine(UseRepairKit());
         }
+    }
+
+    private void UpdateDodge(bool dodge)
+    {
+        if(!dodging && dodge && !waitAtStart)
+        {
+            dodging = true;
+            StartCoroutine(DoDodge());
+        }
+    }
+
+    IEnumerator DoDodge()
+    {
+        dodging = true;
+        float currentTime = 0;
+        
+        if (movementSpeed > 20)
+        {
+            Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+            foreach (Renderer renderer in renderers)
+                renderer.enabled = false;
+            while(currentTime < .5f)
+            {
+                currentTime += Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
+            foreach (Renderer renderer in renderers)
+                renderer.enabled = true;
+        }
+        else
+        {
+            float direction = horizontalMovement;
+            while (currentTime < 0.5f)
+            {
+                currentTime += Time.deltaTime;
+                if(direction <= 0)
+                    transform.rotation = Quaternion.Euler(0, 0, currentTime * 720);
+                else
+                    transform.rotation = Quaternion.Euler(0, 0, -currentTime * 720);
+                yield return new WaitForEndOfFrame();
+            }
+        }
+        dodging = false;
+        yield return null;
     }
 
     IEnumerator UseImpactShield()
@@ -271,10 +317,13 @@ public class PlayerController : MonoBehaviour
                 //Move in that direction floatily
                 transform.position = Vector3.Lerp(transform.position, lastPosition, 1 / movementSpeed);
 
-                if (horizontalMovement == 0 || hadToStop)
-                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, 0), 0.1f);
-                else
-                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, -25 * horizontalMovement), 0.1f);
+                if (!dodging)
+                {
+                    if (horizontalMovement == 0 || hadToStop)
+                        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, 0), 0.1f);
+                    else
+                        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, -25 * horizontalMovement), 0.1f);
+                }
             }
             yield return new WaitForEndOfFrame();
         }
@@ -282,9 +331,9 @@ public class PlayerController : MonoBehaviour
         yield return null;
     }
 
-    private void OnTriggerEnter(Collider collider)
+    private void OnTriggerStay(Collider collider)
     {
-        if (collider.GetComponent<Hazard>() && collider.GetComponent<Hazard>().team != gameObject.tag)
+        if (collider.GetComponent<Hazard>() && collider.GetComponent<Hazard>().team != gameObject.tag && !dodging)
         {
             Hazard hazard = collider.GetComponent<Hazard>();
             CameraShake.current.Shake(hazard.shakeAmount, hazard.timeShake);
