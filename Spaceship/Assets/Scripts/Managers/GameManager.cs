@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour
     public GameObject forceFieldPrefab;
     //Image for the healthbar
     public Image healthBar;
+    public Image[] impactShields;
+    public Image repairKit;
 
     private int sceneIndex = 4;
     private int numberOfEnemies;
@@ -93,7 +95,20 @@ public class GameManager : MonoBehaviour
     public GameObject EnableImpactField()
     {
         GameObject field = Instantiate(forceFieldPrefab, PlayerController.current.transform);
+        foreach (Image image in impactShields)
+        {
+            if (image.color == new Color(1, 1, 0))
+            {
+                image.color = new Color(0.25f, 0.25f, 0.25f);
+                break;
+            }
+        }
         return field;
+    }
+
+    public void UseRepairKit()
+    {
+        repairKit.gameObject.SetActive(false);
     }
 
     //Add points to the total score

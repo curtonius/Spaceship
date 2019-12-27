@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XInputDotNetPure;
 
 public class CameraShake : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class CameraShake : MonoBehaviour
 
     IEnumerator DoShake(float shakeAmount)
     {
+        GamePad.SetVibration(PlayerIndex.One, shakeAmount*1.5f, shakeAmount* 1.5f);
         Quaternion lastRot = transform.rotation;
         float amountToReduceBy = (shakeAmount / timeToShakeFor);
         while (timeToShakeFor > 0)
@@ -44,7 +46,7 @@ public class CameraShake : MonoBehaviour
             i += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
-
+        GamePad.SetVibration(PlayerIndex.One, 0, 0);
         yield return null;
     }
 }

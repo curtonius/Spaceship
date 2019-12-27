@@ -26,7 +26,6 @@ public class PlayerController : MonoBehaviour
     
     private float healthBarSize;
     private float lastTimeHit;
-    private float scrapWait;
     public bool waitAtStart;
     private Cutscene cutscene;
 
@@ -34,13 +33,15 @@ public class PlayerController : MonoBehaviour
     private float verticalMovement;
     private bool alreadyMoving;
 
-    private int repairKit=1;
+    private int repairKit;
     private int impactShields=3;
     private bool shield;
     public bool dodging;
     private GameObject forceField;
     private float left = 0;
     private float up = 0;
+    private bool alreadyWaitingToHeal = false;
+
     private void UpdateHealth()
     {
         float percentage = (float)health / (float)maxHealth;
@@ -71,27 +72,24 @@ public class PlayerController : MonoBehaviour
 
         if(MiscData.repairKits != 0)
         {
-            repairKit = 1;
+            repairKit -= 1;
         }
     }
 
     private IEnumerator HealAfterTime()
     {
-        while (health < maxHealth)
+        if (!alreadyWaitingToHeal)
         {
-            if (Time.time - lastTimeHit >= timeToHeal && MiscData.Scrap >= 1)
+            while (health < maxHealth)
             {
-                Health += movementSpeed * Time.deltaTime;
-                scrapWait += Time.deltaTime;
-                if (scrapWait >= 1)
+                alreadyWaitingToHeal = true;
+                if (Time.time - lastTimeHit >= timeToHeal)
                 {
-                    scrapWait = 0;
-                    MiscData.Scrap -= 1;
+                    Health += movementSpeed * Time.deltaTime;
                 }
+                yield return new WaitForEndOfFrame();
             }
-            yield return new WaitForEndOfFrame();
         }
-
         yield return null;
     }
 
@@ -144,6 +142,15 @@ public class PlayerController : MonoBehaviour
                     StartCoroutine(WaitAtStart());
                 }
             }
+        }
+
+        if(MiscData.repairKits > 0)
+        {
+            repairKit = 1;
+        }
+        else
+        {
+            GameManager.current.UseRepairKit();
         }
     }
 
@@ -274,6 +281,7 @@ public class PlayerController : MonoBehaviour
     {
         float amountToHeal = maxHealth - health;
         float current = 0;
+        GameManager.current.UseRepairKit();
         while(current < amountToHeal)
         {
             current += 1;
