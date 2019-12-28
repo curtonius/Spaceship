@@ -70,6 +70,11 @@ public class CustomizeShip : MonoBehaviour
         GameManager.current.Clear();
     }
 
+    private void OnDestroy()
+    {
+        EventManager.Instance.RemoveEventListener<Vector3>("MovedMouse", MovedMouse);
+    }
+
     private void MovedMouse(Vector3 mousePosition)
     {
         RectTransform rectTransform = background.GetComponent<RectTransform>();

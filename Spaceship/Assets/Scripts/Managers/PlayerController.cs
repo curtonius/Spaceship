@@ -93,6 +93,15 @@ public class PlayerController : MonoBehaviour
         yield return null;
     }
 
+    private void OnDestroy()
+    {
+        EventManager.Instance.RemoveEventListener<float>("UpdateHorizontal", UpdateHorizontal);
+        EventManager.Instance.RemoveEventListener<float>("UpdateVertical", UpdateVertical);
+        EventManager.Instance.RemoveEventListener<bool>("UpdateImpact", UpdateImpact);
+        EventManager.Instance.RemoveEventListener<bool>("UpdateRepair", UpdateRepair);
+        EventManager.Instance.RemoveEventListener<bool>("UpdateDodge", UpdateDodge);
+    }
+
     private void Start()
     {
         current = this;
@@ -119,7 +128,10 @@ public class PlayerController : MonoBehaviour
         healthBar = GameManager.current.healthBar;
         healthBarSize = healthBar.rectTransform.rect.width;
 
-        lastPosition = new Vector3(0,0,-10);
+        if (GameManager.current.CurrentState != GameManager.State.Endless)
+            lastPosition = new Vector3(0, 0, -10);
+        /*else
+            lastPosition = new Vector3(0, 0, -10);*/
 
         PlayerInputManager fake = PlayerInputManager.Instance;
         EventManager.Instance.AddEventListener<float>("UpdateHorizontal", UpdateHorizontal);

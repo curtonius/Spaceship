@@ -83,6 +83,10 @@ public class GameManager : MonoBehaviour
 
         menuUI.sizeDelta = new Vector2(Screen.width,Screen.height);
     }
+    private void OnDestroy()
+    {
+        EventManager.Instance.RemoveEventListener<int>("UpdateScrap", UpdateScrapText);
+    }
 
     //Create explosion at position, and destroy it after half a second
     public void SpawnExplosion(Vector3 position)

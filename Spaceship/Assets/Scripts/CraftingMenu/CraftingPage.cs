@@ -58,6 +58,11 @@ public class CraftingPage : MonoBehaviour
         GameManager.current.Clear();
     }
 
+    private void OnDestroy()
+    {
+        EventManager.Instance.RemoveEventListener<int>("UpdateScrap", UpdateScrapText);
+    }
+
     public void HideTabs()
     {
         hullTab.color = thrusterTab.color = weaponTab.color = deselectedColor;

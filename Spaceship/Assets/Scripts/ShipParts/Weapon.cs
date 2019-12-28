@@ -27,6 +27,11 @@ public class Weapon : Part
         EventManager.Instance.AddEventListener<float>("UpdateFiring", UpdateFiring);
     }
 
+    private void OnDestroy()
+    {
+        EventManager.Instance.RemoveEventListener<float>("UpdateFiring", UpdateFiring);
+    }
+
     public void UpdateFiring(float updated)
     {
         if (updated == 1 && PlayerController.current && !PlayerController.current.waitAtStart)
