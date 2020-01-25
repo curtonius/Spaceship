@@ -148,9 +148,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd931d2211b8d544aad09f2f32b76ed4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotate: {x: 0, y: 0, z: 0}
+  rotate: {x: 0, y: 0, z: -1}
   rotationSpeed: 1.5
-  randomize: 1
+  randomizeX: 0
+  randomizeY: 1
+  randomizeZ: 1
 --- !u!65 &2553010716919168821
 BoxCollider:
   m_ObjectHideFlags: 0

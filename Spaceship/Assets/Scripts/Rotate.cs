@@ -6,12 +6,21 @@ public class Rotate : MonoBehaviour
 {
     public Vector3 rotate;
     public float rotationSpeed = 1;
-    public bool randomize;
+    public bool randomizeX;
+    public bool randomizeY;
+    public bool randomizeZ;
     // Start is called before the first frame update
     void Start()
     {
-        if (randomize)
-            rotate = new Vector3(Random.Range(-2, 2), Random.Range(-1, 1), Random.Range(-2, 2));
+        Vector3 randomized = rotate;
+        if (randomizeX)
+            randomized.x = Random.Range(-2, 2);
+        if (randomizeY)
+            randomized.y = Random.Range(-2, 2);
+        if (randomizeZ)
+            randomized.z = Random.Range(-2, 2);
+
+        rotate = randomized.normalized;
     }
 
     // Update is called once per frame
