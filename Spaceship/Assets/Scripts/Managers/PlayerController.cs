@@ -128,10 +128,7 @@ public class PlayerController : MonoBehaviour
         healthBar = GameManager.current.healthBar;
         healthBarSize = healthBar.rectTransform.rect.width;
 
-        if (GameManager.current.CurrentState != GameManager.State.Endless)
-            lastPosition = new Vector3(0, 0, -10);
-        /*else
-            lastPosition = new Vector3(0, 0, -10);*/
+        lastPosition = new Vector3(0, 0, -10);
 
         PlayerInputManager fake = PlayerInputManager.Instance;
         EventManager.Instance.AddEventListener<float>("UpdateHorizontal", UpdateHorizontal);

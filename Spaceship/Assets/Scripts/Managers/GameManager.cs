@@ -378,6 +378,29 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(PlayStandardGame());
         }
+        else if(CurrentState == State.Endless)
+        {
+            StartCoroutine(PlayEndlessGame());
+        }
+    }
+
+    IEnumerator PlayEndlessGame()
+    {
+        bool playing = true;
+        while (playing)
+        {
+            Bullet[] bullets = FindObjectsOfType<Bullet>();
+            for (int i = 0; i < bullets.Length; i += 1)
+            {
+                if (bullets[i].transform.position.z > topRight.z)
+                {
+                    Destroy(bullets[i].gameObject);
+                }
+            }
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return null;
     }
 
     IEnumerator PlayStandardGame()
