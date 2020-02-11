@@ -29,8 +29,9 @@ public class Bullet : Hazard
                 Enemy enemy = collider.GetComponent<Enemy>();
                 if (enemy)
                 {
-                    enemy.health -= damage;
+                    enemy.health -= damage+GameManager.current.boosts["Damage Increase"];
                     enemy.Hurt();
+                    GameManager.current.AddHit();
                 }
                 GameManager.current.SpawnExplosion(transform.position);
                 Destroy(gameObject);

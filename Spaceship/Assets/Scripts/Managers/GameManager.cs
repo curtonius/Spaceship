@@ -56,6 +56,12 @@ public class GameManager : MonoBehaviour
     private Vector3 topRight;
     private Vector3 bottomLeft;
 
+    public Dictionary<string, int> boosts = new Dictionary<string, int>();
+    private int hits;
+    private int hitsThreshold;
+    private int boostNumber = 1;
+    public Text boostLogo;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -75,6 +81,7 @@ public class GameManager : MonoBehaviour
         highscoreText.text = "Highscore: " + MiscData.highscore.ToString();
 
         finishLogo.rectTransform.position -= new Vector3(-(Screen.width / 2 + finishLogo.rectTransform.rect.width / 2), 0, 0);
+        boostLogo.rectTransform.position = finishLogo.rectTransform.position;
 
         background1.rectTransform.sizeDelta = background2.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.width * 2);
         background2.rectTransform.anchoredPosition = background1.rectTransform.anchoredPosition + new Vector2(0, Screen.width * 2);
@@ -82,10 +89,73 @@ public class GameManager : MonoBehaviour
         background2.GetComponent<Scroller>().tileSize = Screen.width * 2;
 
         menuUI.sizeDelta = new Vector2(Screen.width,Screen.height);
+
+        boosts.Add("Damage Increase", 0);
+        boosts.Add("Extra Repair Kit", 0);
+        boosts.Add("Extra Impact Shield", 0);
+        boosts.Add("Health Increase", 0);
+        boosts.Add("Speed Increase", 0);
+        boosts.Add("Scrap Collection Increase", 0);
+        hitsThreshold = 10;
     }
     private void OnDestroy()
     {
         EventManager.Instance.RemoveEventListener<int>("UpdateScrap", UpdateScrapText);
+    }
+
+    public void AddHit()
+    {
+        hits += 1;
+        Debug.Log(hits);
+        if(hits == hitsThreshold)
+        {
+            hits = 0;
+            boostNumber += 1;
+            hitsThreshold = 5 * (int)Mathf.Pow(2,boostNumber);
+            DoBoost();
+        }
+    }
+
+    public void ClearHits()
+    {
+        hits = 0;
+    }
+
+    public void DoBoost()
+    {
+        int value = Random.Range(1, 6);
+        if (value == 1)
+        {
+            boosts["Damage Increase"] += 3;
+            StartCoroutine(DisplayBoost("Damage Increase"));
+        }
+        else if (value == 2)
+        {
+            PlayerController.current.AddRepairKit();
+            StartCoroutine(DisplayBoost("Extra Repair Kit"));
+        }
+        else if (value == 3)
+        {
+            PlayerController.current.AddImpactShield();
+            AddImpactShield();
+            StartCoroutine(DisplayBoost("Extra Impact Shield"));
+        }
+        else if (value == 4)
+        {
+            PlayerController.current.maxHealth += 10;
+            PlayerController.current.Health += 20;
+            StartCoroutine(DisplayBoost("Health Increase"));
+        }
+        else if (value == 5)
+        {
+            PlayerController.current.movementSpeed += 2;
+            StartCoroutine(DisplayBoost("Speed Increase"));
+        }
+        else if (value == 6)
+        {
+            boosts["Scrap Collection Increase"] += 1;
+            StartCoroutine(DisplayBoost("Scrap Collection Increase"));
+        }
     }
 
     //Create explosion at position, and destroy it after half a second
@@ -94,6 +164,18 @@ public class GameManager : MonoBehaviour
         GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity);
         explosion.GetComponent<ParticleSystem>().Emit(1);
         Destroy(explosion, 0.5f);
+    }
+
+    public void AddImpactShield()
+    {
+        foreach (Image image in impactShields)
+        {
+            if (image.color != new Color(1, 1, 0))
+            {
+                image.color = new Color(1, 1, 0);
+                break;
+            }
+        }
     }
 
     public GameObject EnableImpactField()
@@ -444,6 +526,24 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(EndLevel(false, false));
         }
+    }
+
+    private IEnumerator DisplayBoost(string boostLabel)
+    {
+        boostLogo.text = "Boost: " + boostLabel;
+        RectTransform rectTransform = boostLogo.rectTransform;
+        while (rectTransform.position.x > Screen.width / 2)
+        {
+            rectTransform.position -= new Vector3(50, 0, 0);
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.5f);
+        while (rectTransform.position.x < Screen.width + rectTransform.rect.width / 2)
+        {
+            rectTransform.position += new Vector3(50, 0, 0);
+            yield return null;
+        }
+        yield return null;
     }
 
     private IEnumerator EndLevel(bool cleared, bool endless)

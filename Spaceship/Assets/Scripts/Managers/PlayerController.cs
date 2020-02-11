@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController current;
 
-    public float Health {get { return health; } set { health = Mathf.Clamp(value, 0, maxHealth); UpdateHealth(); } }
+    public float Health {get { return health; } set { if (value < health) { GameManager.current.ClearHits(); } health = Mathf.Clamp(value, 0, maxHealth); UpdateHealth(); } }
     private float health;
     public float maxHealth;
     public float movementSpeed;
@@ -74,6 +74,16 @@ public class PlayerController : MonoBehaviour
         {
             repairKit -= 1;
         }
+    }
+
+    public void AddRepairKit()
+    {
+        repairKit += 1;
+    }
+
+    public void AddImpactShield()
+    {
+        impactShields += 1;
     }
 
     private IEnumerator HealAfterTime()
