@@ -26,8 +26,7 @@ public class PlayerController : MonoBehaviour
     
     private float healthBarSize;
     private float lastTimeHit;
-    public bool waitAtStart;
-    private Cutscene cutscene;
+    public bool waitAtStart=true;
 
     private float horizontalMovement;
     private float verticalMovement;
@@ -112,7 +111,7 @@ public class PlayerController : MonoBehaviour
         EventManager.Instance.RemoveEventListener<bool>("UpdateDodge", UpdateDodge);
     }
 
-    private void Start()
+    private void Awake()
     {
         current = this;
 
@@ -147,21 +146,8 @@ public class PlayerController : MonoBehaviour
         EventManager.Instance.AddEventListener<bool>("UpdateRepair", UpdateRepair);
         EventManager.Instance.AddEventListener<bool>("UpdateDodge", UpdateDodge);
 
-        if (FindObjectOfType<Cutscene>())
-        {
-            Cutscene[] cutscenes;
-            cutscenes = FindObjectsOfType<Cutscene>();
-            
-            for (int i = 0; i < cutscenes.Length; i += 1)
-            {
-                if (cutscenes[i].beginning)
-                {
-                    waitAtStart = true;
-                    cutscene = cutscenes[i];
-                    StartCoroutine(WaitAtStart());
-                }
-            }
-        }
+        StartCoroutine(CutsceneManager.Instance.ReadCutscene(true));
+
 
         if(MiscData.repairKits > 0)
         {
@@ -173,19 +159,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void EndLevel(Cutscene scene)
+    public void EndLevel()
     {
-        waitAtStart = true;
-        cutscene = scene;
-    }
-
-    IEnumerator WaitAtStart()
-    {
-        while(cutscene != null)
-        {
-            yield return new WaitForEndOfFrame();
-        }
-        yield return null;
+        StartCoroutine(CutsceneManager.Instance.ReadCutscene(false));
     }
 
     private void UpdateHorizontal(float horizontal)
@@ -325,7 +301,7 @@ public class PlayerController : MonoBehaviour
         float moveByTime = movementSpeed * Time.deltaTime;
         lastPosition += (Vector3.forward * verticalMovement) * moveByTime + (Vector3.right * horizontalMovement) * moveByTime;
 
-        while (transform.position != lastPosition && cutscene == null)
+        while (transform.position != lastPosition && !waitAtStart)
         {
             if (Time.timeScale != 0)
             {

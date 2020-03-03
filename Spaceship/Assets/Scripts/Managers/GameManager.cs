@@ -365,50 +365,23 @@ public class GameManager : MonoBehaviour
         }
 
         Vector3 oldGameUIPosition = gameUI.position;
-        Vector3 oldCutsceneUIPosition = cutsceneUI.position;
         gameUI.position += new Vector3(gameUI.rect.width,0,0);
         gameUI.gameObject.SetActive(true);
-        Cutscene scene = null;
-        if (FindObjectOfType<Cutscene>())
-        {
-            Cutscene[] cutscenes;
-            cutscenes = FindObjectsOfType<Cutscene>();
-
-            for (int i = 0; i < cutscenes.Length; i += 1)
-            {
-                if (cutscenes[i].beginning)
-                {
-                    cutsceneUI.position -= new Vector3(cutsceneUI.rect.width, 0, 0);
-                    cutsceneUI.gameObject.SetActive(true);
-                    scene = cutscenes[i];
-                    scene.characterImage.sprite = scene.parts[0].sprite;
-                    break;
-                }
-            }
-        }
         Vector3 newGameUIPosition = gameUI.position;
-        Vector3 newCutsceneUIPosition = cutsceneUI.position;
         Vector3 playerPosition = PlayerController.current.transform.position;
 
         float j = 0;
         while(gameUI.position != oldGameUIPosition)
         {
             gameUI.position = Vector3.Lerp(newGameUIPosition, oldGameUIPosition, j);
-            if (scene)
-                cutsceneUI.position = Vector3.Lerp(newCutsceneUIPosition, oldCutsceneUIPosition, j);
 
-            PlayerController.current.transform.position = Vector3.Lerp(playerPosition, new Vector3(0, 0, -10), j);
+            
 
             j += Time.deltaTime;
             yield return null;
         }
 
         yield return new WaitForSeconds(0.5f);
-
-        if(scene!=null)
-        {
-            scene.Play();
-        }
 
         yield return null;
     }
@@ -572,48 +545,20 @@ public class GameManager : MonoBehaviour
         if (cleared)
         {
             //Pull up cutscene, add cutscene to player, play cutscene, finish
-            Cutscene scene = null;
-            if (FindObjectOfType<Cutscene>())
-            {
-                Cutscene[] cutscenes;
-                cutscenes = FindObjectsOfType<Cutscene>();
+            PlayerController.current.EndLevel();
 
-                for (int i = 0; i < cutscenes.Length; i += 1)
-                {
-                    if (cutscenes[i].ending)
-                    {
-                        PlayerController.current.EndLevel(cutscenes[i]);
-                        scene = cutscenes[i];
-                        scene.Clear();
-                        scene.characterImage.sprite = scene.parts[0].sprite;
-                    }
-                }
-            }
-
-            Vector3 oldPosition = cutsceneUI.transform.position;
-            Vector3 newPosition = cutsceneUI.transform.position + new Vector3(cutsceneUI.GetComponent<RectTransform>().rect.width, 0, 0);
-
-            float j = 0;
-            while (cutsceneUI.position != newPosition)
-            {
-                cutsceneUI.transform.position = Vector3.Lerp(oldPosition, newPosition, j);
-
-                j += Time.deltaTime;
-                yield return null;
-            }
-
-            scene.Play();
-
-            while (scene != null)
+          
+            while (CutsceneManager.Instance.playingCutscene)
             {
                 yield return new WaitForEndOfFrame();
             }
+
             Transform playerTrans = PlayerController.current.transform;
             Destroy(PlayerController.current);
-            oldPosition = playerTrans.position;
-            newPosition = playerTrans.position + new Vector3(0, 0, 15);
+            Vector3 oldPosition = playerTrans.position;
+            Vector3 newPosition = playerTrans.position + new Vector3(0, 0, 15);
 
-            j = 0;
+            float j = 0;
             while (playerTrans.position != newPosition)
             {
                 playerTrans.position = Vector3.Lerp(oldPosition, newPosition, j);

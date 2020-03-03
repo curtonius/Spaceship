@@ -2889,6 +2889,7 @@ GameObject:
   - component: {fileID: 1603865628}
   - component: {fileID: 1603865627}
   - component: {fileID: 1603865629}
+  - component: {fileID: 1603865631}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3169,6 +3170,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Sounds: []
+--- !u!114 &1603865631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603865621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99a55b8a516553144b7dcbf0664a5db6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playingCutscene: 0
 --- !u!1 &1690311255
 GameObject:
   m_ObjectHideFlags: 0

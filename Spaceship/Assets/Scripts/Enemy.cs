@@ -25,7 +25,6 @@ public class Enemy : MonoBehaviour
     private Vector4 currentMovement;
     private Color oldEmissionColor;
     private Material material;
-    private Cutscene cutscene;
 
     public Collect[] droppables;
     private void Start()
@@ -38,32 +37,7 @@ public class Enemy : MonoBehaviour
         topRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 10));
         bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 10));
 
-        if (!FindObjectOfType<Cutscene>())
-        {
-            //Starts moving and shooting
-            StartCoroutine(Move());
-            StartCoroutine(ShouldWeShoot());
-        }
-        else
-        {
-            Cutscene[] cutscenes;
-            cutscenes = FindObjectsOfType<Cutscene>();
-            bool atStart = false;
-            for(int i=0; i<cutscenes.Length; i+=1)
-            {
-                if(cutscenes[i].beginning)
-                {
-                    atStart = true;
-                    cutscene = cutscenes[i];
-                    StartCoroutine(WaitForEndOfCutscene());
-                }
-            }
-            if(!atStart)
-            {
-                StartCoroutine(Move());
-                StartCoroutine(ShouldWeShoot());
-            }
-        }
+        StartCoroutine(WaitForEndOfCutscene());
     }
     public void Hurt()
     {
@@ -72,7 +46,7 @@ public class Enemy : MonoBehaviour
 
     IEnumerator WaitForEndOfCutscene()
     {
-        while(cutscene)
+        while(PlayerController.current.waitAtStart)
         {
             yield return new WaitForEndOfFrame();
         }

@@ -1,0 +1,36 @@
+[[Level 1]] AtStart
+MoveTo(PlayerShip,-3,0,-10,1)
+FaceDirection(PlayerShip,0,90,0,1)
+PlayText(CharacterTest1,Is there anybody here?!)
+Wait(0.5)
+FaceDirection(PlayerShip,0,0,0,1)
+Rep
+{
+FaceDirection(PlayerShip,0,0,0,1)
+Wait(.25)
+FaceDirection(PlayerShip,0,-90,0,1)
+Wait(.25)
+FaceDirection(PlayerShip,0,0,0,1)
+Wait(.25)
+FaceDirection(PlayerShip,0,90,0,1)
+Wait(.25)
+}
+PlayText(CharacterTest2,This is quite sad. Alexa play despacito.)
+MoveTo(PlayerShip,0,0,-10,1)
+FaceDirection(PlayerShip,0,0,0,1)
+End Scene: Release Player
+
+[[Level 1]] AtEnd
+PlayText(CharacterTest2,Hello???)
+Rep
+{
+FaceDirection(PlayerShip,0,-90,0,1)
+Wait(1)
+FaceDirection(PlayerShip,0,0,0,1)
+Wait(1)
+FaceDirection(PlayerShip,0,90,0,1)
+Wait(1)
+FaceDirection(PlayerShip,0,0,0,1)
+}
+PlayText(CharacterTest2,...Oh well...)
+End Scene: Close
