@@ -113,6 +113,10 @@ public class CutsceneManager : MonoBehaviour
     IEnumerator PlayText(string line)
     {
         playingText = true;
+
+        while (Input.GetAxisRaw("Fire") != 0)
+            yield return new WaitForEndOfFrame();
+
         int firstComma = line.IndexOf(",");
         string characterImageName = line.Substring(0, firstComma);
         Sprite characterImageFile = (Sprite)Resources.Load(characterImageName, typeof(Sprite));
@@ -155,7 +159,9 @@ public class CutsceneManager : MonoBehaviour
                 }
                 yield return new WaitForEndOfFrame();
             }
+            dialogBox.text = finalText;
         }
+        
         playingText = false;
         yield return null;
     }

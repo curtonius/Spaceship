@@ -52,6 +52,7 @@ public class Weapon : Part
         {
             GameObject b = Instantiate(bullet, barrel.position, Quaternion.identity);
             Bullet bulletScript = b.GetComponent<Bullet>();
+            print(transform.parent);
             bulletScript.team = transform.parent.tag;
             bulletScript.direction = transform.forward;
             bulletScript.damage += damageMod + (MiscData.weaponLight*5);

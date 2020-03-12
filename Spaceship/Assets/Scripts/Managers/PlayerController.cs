@@ -291,7 +291,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator ShieldHit()
     {
         Time.timeScale = 0;
-        yield return new WaitForSecondsRealtime(0.25f);
+        yield return new WaitForSecondsRealtime(0.125f);
         Time.timeScale = 1;
         yield return null;
     }

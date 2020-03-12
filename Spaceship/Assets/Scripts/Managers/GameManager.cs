@@ -290,7 +290,10 @@ public class GameManager : MonoBehaviour
         {
             if (MiscData.currentWeapons[i] >= 0)
             {
-                Weapon weapon = Instantiate(allParts[MiscData.currentWeapons[i]].gameObject, hull.weaponPorts[i].position, hull.weaponPorts[i].rotation).GetComponent<Weapon>();
+                GameObject weaponBase = Instantiate(PlayerController.current.weaponBase, hull.weaponPorts[i].position, hull.weaponPorts[i].rotation);
+                weaponBase.transform.parent = playerControllerTransform;
+
+                Weapon weapon = Instantiate(allParts[MiscData.currentWeapons[i]].gameObject, weaponBase.transform.position + weaponBase.transform.up * 0.05f, Quaternion.identity).GetComponent<Weapon>();
                 weapon.transform.SetParent(playerControllerTransform);
                 weapon.barrel = hull.weaponPorts[i];
             }
