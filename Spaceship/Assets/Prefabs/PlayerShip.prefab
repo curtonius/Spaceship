@@ -39,8 +39,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1820433401982729161}
-  - component: {fileID: 1820433401982729206}
-  - component: {fileID: 1820433401982729207}
   - component: {fileID: 1820433401982729204}
   - component: {fileID: 1820433401982729205}
   - component: {fileID: 2071535613947250838}
@@ -66,51 +64,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1820433401982729206
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1820433401982729202}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1820433401982729207
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1820433401982729202}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: ca829bfd1b2f135488e906d60c416c9f, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!65 &1820433401982729204
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -136,13 +89,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07eb9695da144ff45b52e0d340c54f83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
   maxHealth: 100
   movementSpeed: 10
   timeToHeal: 10
   background1: {fileID: 0}
   background2: {fileID: 0}
   starEmitter: {fileID: 0}
+  weaponBase: {fileID: 1790809188336958062, guid: f4cf56b3b66304847abaaea4bc6dec16,
+    type: 3}
+  waitAtStart: 1
+  dodging: 0
 --- !u!114 &2071535613947250838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,9 +111,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c16ac62a210f89498ce73e1d8c9ef42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 0
+  levelRequirement: 1
+  scrapRequirement: 1
+  special: 
+  sprite: {fileID: 0}
+  damageMod: 0
   fireRate: 0.25
   barrel: {fileID: 1820433401731875890}
   bullet: {fileID: 1790809188336958062, guid: c379dd8c83f009946bdc0989004498e0, type: 3}
   charge: 0
   laser: 0
+  chargeSpeed: 0
   maxCharge: 0

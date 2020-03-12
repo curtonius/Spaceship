@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public Scroller background1;
     public Scroller background2;
     public Transform starEmitter;
+    public GameObject weaponBase;
 
     private Vector3 lastPosition;
 
