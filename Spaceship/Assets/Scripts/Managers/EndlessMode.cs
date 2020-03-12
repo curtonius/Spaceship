@@ -16,7 +16,7 @@ public class EndlessMode : MonoBehaviour
         Vector3 topRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 10));
         Vector3 bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 10));
 
-        transform.localScale = new Vector3(topRight.x - bottomLeft.x, 1, 1);
+        transform.localScale = new Vector3(topRight.x - bottomLeft.x - 2, 1, 1);
         x = transform.localScale.x/2;
         timeUntilSpawn = Random.Range(minTime, maxTime);
 
