@@ -33,8 +33,7 @@ public class GameManager : MonoBehaviour
     //UI Element for the Finish logo
     public Text finishLogo;
     //UI Element for Background
-    public Image background1;
-    public Image background2;
+    public GameObject background;
 
     //UI Elements for cutscenes
     public RectTransform cutsceneUI;
@@ -82,11 +81,6 @@ public class GameManager : MonoBehaviour
 
         finishLogo.rectTransform.position -= new Vector3(-(Screen.width / 2 + finishLogo.rectTransform.rect.width / 2), 0, 0);
         boostLogo.rectTransform.position = finishLogo.rectTransform.position;
-
-        background1.rectTransform.sizeDelta = background2.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.width * 2);
-        background2.rectTransform.anchoredPosition = background1.rectTransform.anchoredPosition + new Vector2(0, Screen.width * 2);
-        background1.GetComponent<Scroller>().tileSize = Screen.width * 2;
-        background2.GetComponent<Scroller>().tileSize = Screen.width * 2;
 
         menuUI.sizeDelta = new Vector2(Screen.width,Screen.height);
 
@@ -229,8 +223,7 @@ public class GameManager : MonoBehaviour
 
     public void Clear()
     {
-        Destroy(background1);
-        Destroy(background2);
+        background.SetActive(false);
         menuUI.gameObject.SetActive(false);
     }
 
@@ -303,8 +296,7 @@ public class GameManager : MonoBehaviour
         PlayerController.current.Health = PlayerController.current.maxHealth;
         PlayerController.current.movementSpeed += thruster.speedMod + MiscData.thrusterLight;
 
-        Destroy(background1);
-        Destroy(background2);
+        background.SetActive(false);
 
 
         yield return null;
@@ -345,8 +337,7 @@ public class GameManager : MonoBehaviour
         PlayerController.current.movementSpeed += thruster.speedMod + MiscData.thrusterLight;
 
 
-        Destroy(background1);
-        Destroy(background2);
+        background.SetActive(false);
         numberOfEnemies = hazards.Count;
         Hazard hazard = hazards[0];
         lastEnemy = hazard.transform;

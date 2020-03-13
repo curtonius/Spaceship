@@ -8,8 +8,7 @@ public class CustomizeShip : MonoBehaviour
     public static CustomizeShip current;
 
     public List<Image> imageButtons = new List<Image>();
-    public Scroller background1;
-    public Scroller background2;
+    public GameObject spaceBackground;
 
     //Tabs
     public Image hullTab;
@@ -58,9 +57,7 @@ public class CustomizeShip : MonoBehaviour
         //Gets distance between left side of the screen and right side of the screen
         float sizeVariable = Mathf.Abs(topRight.x - bottomLeft.x);
 
-        background1.transform.localScale = background2.transform.localScale = new Vector3(sizeVariable, 1, sizeVariable);
-        background2.transform.position = background1.transform.position + new Vector3(0, 0, sizeVariable);
-        background1.tileSize = background2.tileSize = sizeVariable;
+        spaceBackground.transform.localScale = spaceBackground.transform.localScale = new Vector3(sizeVariable, 1, sizeVariable);
 
         current = this;
         buttonHeight = buttonToClone.GetComponent<RectTransform>().rect.height;

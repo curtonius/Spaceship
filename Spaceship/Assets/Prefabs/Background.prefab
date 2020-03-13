@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7732050537181921448}
   - component: {fileID: 7732050537181921451}
   - component: {fileID: 7732050537181921450}
-  - component: {fileID: 7732050537181921449}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -58,7 +57,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 072326046c23dd541bbe3dacbdd31235, type: 2}
+  - {fileID: 2100000, guid: a51c3e78886491a4abe4ee4d6778bbb6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -78,18 +77,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &7732050537181921449
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7732050537181921452}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49445d593f7b2ea48b9602e3fd8e5648, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scrollSpeed: 1
-  tileSizeZ: 0
-  direction: {x: 0, y: 0, z: -1}

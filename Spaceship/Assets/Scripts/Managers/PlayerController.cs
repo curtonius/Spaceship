@@ -13,8 +13,7 @@ public class PlayerController : MonoBehaviour
     public float movementSpeed;
     public float timeToHeal = 10;
 
-    public Scroller background1;
-    public Scroller background2;
+    public GameObject background;
     public Transform starEmitter;
     public GameObject weaponBase;
 
@@ -122,15 +121,12 @@ public class PlayerController : MonoBehaviour
         //Gets distance between left side of the screen and right side of the screen
         float sizeVariable = Mathf.Abs(topRight.x - bottomLeft.x);
 
-        background1.transform.localScale = background2.transform.localScale = new Vector3(sizeVariable, 1, sizeVariable * 2);
-        background2.transform.position = background1.transform.position + new Vector3(0, 0, sizeVariable * 2);
+        background.transform.localScale = background.transform.localScale = new Vector3(sizeVariable, 1, sizeVariable * 2);
 
         starEmitter.localScale = new Vector3(sizeVariable, 1, 1);
         starEmitter.GetComponent<ParticleSystem>().Stop();
         starEmitter.GetComponent<ParticleSystem>().Play();
-        starEmitter.position = new Vector3(0, -2, background1.transform.position.z + Mathf.Abs(topRight.z - bottomLeft.z));
-
-        background1.tileSize = background2.tileSize =  sizeVariable * 2;
+        starEmitter.position = new Vector3(0, -2, background.transform.position.z + Mathf.Abs(topRight.z - bottomLeft.z));
 
         //TopRight/BottomLeft for player boundaries
         topRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 10));
