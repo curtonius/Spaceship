@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Hazard : MonoBehaviour
 {
@@ -20,6 +18,7 @@ public class Hazard : MonoBehaviour
         //Adds points to the score
         if (playerDestroyed)
         {
+            //SET UP EVENT
             GameManager.current.AddToScore(score);
         }
     }

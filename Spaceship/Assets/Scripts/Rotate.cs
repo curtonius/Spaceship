@@ -21,11 +21,17 @@ public class Rotate : MonoBehaviour
             randomized.z = Random.Range(-2, 2);
 
         rotate = randomized.normalized;
+
+        StartCoroutine(DoRotate());
     }
 
     // Update is called once per frame
-    void Update()
+    IEnumerator DoRotate()
     {
-        transform.Rotate(rotate * rotationSpeed);
+        while (gameObject)
+        {
+            transform.Rotate(rotate * rotationSpeed);
+            yield return new WaitForEndOfFrame();
+        }
     }
 }

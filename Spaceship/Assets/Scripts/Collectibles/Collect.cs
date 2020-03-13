@@ -1,10 +1,14 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Collect : MonoBehaviour
 {
     private float movementSpeed;
+
+    private void Start()
+    {
+        StartCoroutine(Move());
+    }
     public virtual void DoThing()
     {
 
@@ -15,8 +19,12 @@ public class Collect : MonoBehaviour
         movementSpeed = speed;
     }
 
-    private void Update()
+    private IEnumerator Move()
     {
-        transform.position += new Vector3(0, 0, -1) * movementSpeed * Time.deltaTime;
+        while (gameObject)
+        {
+            transform.position += new Vector3(0, 0, -1) * movementSpeed * Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
     }
 }

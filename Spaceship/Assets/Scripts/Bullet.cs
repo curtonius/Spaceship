@@ -11,6 +11,7 @@ public class Bullet : Hazard
     void Start()
     {
         Destroy(gameObject, lifeTime);
+        StartCoroutine(Move());
     }
 
     private void OnTriggerEnter(Collider collider)
@@ -40,8 +41,12 @@ public class Bullet : Hazard
     }
 
     // Update is called once per frame
-    void Update()
+    IEnumerator Move()
     {
-        transform.position += direction * movementSpeed * Time.deltaTime;
+        while(gameObject)
+        {
+            transform.position += direction * movementSpeed * Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
     }
 }
