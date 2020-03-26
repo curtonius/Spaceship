@@ -109,6 +109,7 @@ public class PlayerController : MonoBehaviour
         EventManager.Instance.RemoveEventListener<bool>("UpdateImpact", UpdateImpact);
         EventManager.Instance.RemoveEventListener<bool>("UpdateRepair", UpdateRepair);
         EventManager.Instance.RemoveEventListener<bool>("UpdateDodge", UpdateDodge);
+        EventManager.Instance.RemoveEventListener<bool>("UpdatePause", UpdatePause);
     }
 
     private void Awake()
@@ -142,6 +143,7 @@ public class PlayerController : MonoBehaviour
         EventManager.Instance.AddEventListener<bool>("UpdateImpact", UpdateImpact);
         EventManager.Instance.AddEventListener<bool>("UpdateRepair", UpdateRepair);
         EventManager.Instance.AddEventListener<bool>("UpdateDodge", UpdateDodge);
+        EventManager.Instance.AddEventListener<bool>("UpdatePause", UpdatePause);
 
         StartCoroutine(CutsceneManager.Instance.ReadCutscene(true));
 
@@ -176,7 +178,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateImpact(bool impact)
     {
-        if(impact && impactShields != 0 && !shield && !waitAtStart)
+        if(impact && impactShields != 0 && !shield && !waitAtStart && Time.timeScale == 1)
         {
             impactShields -= 1;
             shield = true;
@@ -186,16 +188,36 @@ public class PlayerController : MonoBehaviour
     }
     private void UpdateRepair(bool repair)
     {
-        if(repair && repairKit != 0 && !waitAtStart)
+        if(repair && repairKit != 0 && !waitAtStart && Time.timeScale == 1)
         {
             repairKit -= 1;
             StartCoroutine(UseRepairKit());
         }
     }
 
+    private void UpdatePause(bool pause)
+    {
+        if(Time.timeScale > 0 && pause && !waitAtStart)
+        {
+            if(PauseMenu.Instance)
+            {
+                PauseMenu.Instance.Open();
+            }
+            Time.timeScale = 0;
+        }
+        else if(Time.timeScale <= 0 && !pause && !waitAtStart)
+        {
+            if (PauseMenu.Instance)
+            {
+                PauseMenu.Instance.Close();
+            }
+            Time.timeScale = 1;
+        }
+    }
+
     private void UpdateDodge(bool dodge)
     {
-        if(!dodging && dodge && !waitAtStart)
+        if(!dodging && dodge && !waitAtStart && Time.timeScale == 1)
         {
             dodging = true;
             StartCoroutine(DoDodge());
