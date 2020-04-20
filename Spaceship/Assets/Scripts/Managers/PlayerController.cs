@@ -224,6 +224,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
+    IEnumerator SlowTrailDisable(TrailRenderer trail, float timeToStop, float originalTrailTime)
+    {
+        float currentTime = 0;
+
+        while(currentTime < timeToStop)
+        {
+            currentTime += Time.deltaTime;
+            trail.time = originalTrailTime * (1 - (currentTime / timeToStop));
+            yield return new WaitForEndOfFrame();
+        }
+        trail.emitting = false;
+        trail.time = originalTrailTime;
+    }
+
     IEnumerator DoDodge()
     {
         dodging = true;
@@ -245,6 +260,15 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            TrailRenderer[] trailRenderers = GetComponentsInChildren<TrailRenderer>(true);
+            foreach(TrailRenderer trailRenderer in trailRenderers)
+            {
+                if (trailRenderer.emitting == false)
+                {
+                    trailRenderer.emitting = true;
+                    StartCoroutine(SlowTrailDisable(trailRenderer, 0.75f, trailRenderer.time));
+                }
+            }
             float direction = horizontalMovement;
             while (currentTime < 0.5f)
             {
@@ -255,6 +279,7 @@ public class PlayerController : MonoBehaviour
                     transform.rotation = Quaternion.Euler(0, 0, -currentTime * 720);
                 yield return new WaitForEndOfFrame();
             }
+            yield return new WaitForSeconds(0.25f);
         }
         dodging = false;
         yield return null;
